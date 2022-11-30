@@ -65,16 +65,16 @@ def beta_p(w_eff, l_delta_l):
     return mu_0p * c_ox * w_eff / l_delta_l
 
 
-def c_ox(t_ox):
-    return epsilon_0 * epsilon_r_sio2 / t_ox
-
-
 def u_th_n(u_bs):
     return u_th0p + gamma * (math.sqrt(phi - u_bs) - math.sqrt(phi))
 
 
 def u_th_p(u_bs):
     return u_th0p + gamma * (math.sqrt(phi - u_bs) - math.sqrt(phi))
+
+
+def eta(u_bs_a):
+    return gamma/(2 * math.sqrt(phi - u_bs_a))
 
 
 def l_delta_l(l_eff, delta_l):
