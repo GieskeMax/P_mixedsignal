@@ -81,9 +81,9 @@ def u_th_n(u_bs):
 def u_th_p(u_bs):
     return u_th0p + gamma * (math.sqrt(phi - u_bs) - math.sqrt(phi))
 
-def v_d (g_m1, g_m2, g_mb2, r_ds1, r_ds2, r_d)
+def v_d (g_m1, g_m2, g_mb2, r_ds1, r_ds2, r_d):
     return -(g_m1*r_ds1*(1+(g_m2+g_mb2)*r_ds2)*r_d)/(2*(r_ds2+r_ds1*(1+(g_m2+g_mb2)*r_ds2)+r_d))
 
-def r_cascode (r_ds, gm, gmb)
+def r_cascode (r_ds, gm, gmb):
     return r_ds*(r_ds*(gm+gmb+1/r_ds)+1)
 
