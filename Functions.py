@@ -89,12 +89,12 @@ def delta_l_p(u_ds, u_ds_sat):
     return math.sqrt(k_lp*(u_ds - u_ds_sat))
 
 
-def w_eff_n(w):
-    return w-2*updelta_wn
+def w_eff_n(w, n_f):
+    return w-2*n_f*updelta_wn
 
 
-def w_eff_p(w):
-    return w-2*updelta_wp
+def w_eff_p(w, n_f):
+    return w-2*n_f*updelta_wp
 
 
 def l_eff_n(l):
