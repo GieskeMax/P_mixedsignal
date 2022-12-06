@@ -48,43 +48,43 @@ u_t = 25.86  # Temperaturspannung
 
 
 
-def i_d_active(beta, u_gs, u_th, u_ds):
+def calc_i_d_active(beta, u_gs, u_th, u_ds):
     return beta * ((u_gs - u_th) * u_ds - 0.5 * u_ds ** 2)
 
-def i_d_sat(beta, u_gs, u_th, u_ds):
+def calc_i_d_sat(beta, u_gs, u_th, u_ds):
     return 0.5 * beta * (u_gs - u_th) ** 2
 
-def g_m(beta, i_da):
+def calc_g_m(beta, i_da):
     return math.sqrt(2 * beta * i_da)
 
-def g_mb(eta, g_m):
+def calc_g_mb(eta, g_m):
     return eta * g_m
 
-def g_ds(i_da, k_l, delta_l, l_eff):
+def calc_g_ds(i_da, k_l, delta_l, l_eff):
     return i_da * k_l / (2 * delta_l * (l_eff - delta_l))
 
-def u_ds_sat(u_gs, u_th):
+def calc_u_ds_sat(u_gs, u_th):
     return u_gs * u_th
 
-def beta_n(w_eff, l_delta_l):
+def calc_beta_n(w_eff, l_delta_l):
     return mu_0n * c_ox * w_eff / l_delta_l
 
-def beta_p(w_eff, l_delta_l):
+def calc_beta_p(w_eff, l_delta_l):
     return mu_0p * c_ox * w_eff / l_delta_l
 
-def c_ox(t_ox):
+def calc_c_ox(t_ox):
     return epsilon_0 * epsilon_r_sio2 / t_ox
 
-def u_th_n(u_bs):
+def calc_u_th_n(u_bs):
     return u_th0p + gamma * (math.sqrt(phi - u_bs) - math.sqrt(phi))
 
-def u_th_p(u_bs):
+def calc_u_th_p(u_bs):
     return u_th0p + gamma * (math.sqrt(phi - u_bs) - math.sqrt(phi))
 
-def v_d (g_m1, g_m2, g_mb2, r_ds1, r_ds2, r_d):
+def calc_v_d (g_m1, g_m2, g_mb2, r_ds1, r_ds2, r_d):
     return -(g_m1*r_ds1*(1+(g_m2+g_mb2)*r_ds2)*r_d)/(2*(r_ds2+r_ds1*(1+(g_m2+g_mb2)*r_ds2)+r_d))
 
-def r_cascode (r_ds, gm, gmb):
+def calc_r_cascode (r_ds, gm, gmb):
     return r_ds*(r_ds*(gm+gmb+1/r_ds)+1)
 
 
