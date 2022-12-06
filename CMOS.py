@@ -2,7 +2,7 @@ import math
 
 # Vorgaben
 v_dd = 1.65
-v_ss = v_dd - 3.3
+v_ss = 1.65     # -v_ss = -1.65V
 i_q = 20e-6
 u_offs = 10e-6
 u_e_max = 1.55
@@ -102,15 +102,15 @@ def calc_r_cascode(r_ds, gm, gmb):
 
 # Kaskode-Stromspiegel:
 def calc_wl_s():
-    return 2 * i_q / (k_0n * (u_a_min - v_ss - u_th0n) ** 2)
+    return 2 * i_q / (k_0n * (u_a_min + v_ss - u_th0n) ** 2)
 
 
 def calc_u_gs_10(wl_s):
     return u_th0n + (math.sqrt(2 * i_q / (k_0n * wl_s)))
 
 
-def calc_wl_c(wl_s, u_gs, u_thk):
-    return 2 * i_q / (k_0n * (u_a_min - v_ss - u_gs - u_thk) ** 2)
+def calc_wl_c(u_gs, u_thk):
+    return 2 * i_q / (k_0n * (u_a_min + v_ss - u_gs - u_thk) ** 2)
 
 
 wl_10_12 = calc_wl_s()
@@ -123,5 +123,22 @@ print('U_gs10:', u_gs_10)
 u_thk_11 = calc_u_th_n(-u_th0n)
 print('u_thk_11:', u_thk_11)
 
-wl_11_13 = calc_wl_c(wl_10_12, u_gs_10, u_thk_11)
+wl_11_13 = calc_wl_c(1, u_thk_11)
 print('M11, M13:', wl_11_13)
+
+x = 0.5
+u = 0
+
+# Berechnung über die Ungleichung für die Ausgangsspannung: -v_ss + u_gs_12 +u_ds_sat_13 <= -u_a_min
+while(u <= 0.99 or u >= 1.01) :
+    u_gs12 = u_th0n + math.sqrt(2*i_q/(k_0n*x))
+    u_th13 = u_th0n + gamma * (math.sqrt(phi + u_gs12) - math.sqrt(phi))
+    u_ds_sat_13 = u_gs12 - u_th13
+    u = u_gs12 + u_ds_sat_13
+    x += 0.02
+
+print(x)
+print(u)
+
+
+
