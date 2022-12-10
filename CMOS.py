@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 # Vorgaben
 v_dd = 1.65
@@ -112,8 +113,8 @@ def calc_u_gs_10(wl_s):
 def calc_wl_c(u_gs, u_thk):
     return 2 * i_q / (k_0n * (u_a_min + v_ss - u_gs - u_thk) ** 2)
 
-
-wl_10_12 = calc_wl_s()
+#Alte Berechnung vom Kaskode Stromspiegel
+'''wl_10_12 = calc_wl_s()
 print('M10, M12:', wl_10_12)
 
 u_gs_10 = calc_u_gs_10(wl_10_12)
@@ -124,21 +125,49 @@ u_thk_11 = calc_u_th_n(-u_th0n)
 print('u_thk_11:', u_thk_11)
 
 wl_11_13 = calc_wl_c(1, u_thk_11)
-print('M11, M13:', wl_11_13)
+print('M11, M13:', wl_11_13)'''
 
-x = 0.5
-u = 0
 
 # Berechnung über die Ungleichung für die Ausgangsspannung: -v_ss + u_gs_12 +u_ds_sat_13 <= -u_a_min
-while(u <= 0.99 or u >= 1.01) :
+x = 0.5
+ua = float(0)
+while(ua <= 0.99 or ua >= 1.01) :
     u_gs12 = u_th0n + math.sqrt(2*i_q/(k_0n*x))
     u_th13 = u_th0n + gamma * (math.sqrt(phi + u_gs12) - math.sqrt(phi))
     u_ds_sat_13 = u_gs12 - u_th13
-    u = u_gs12 + u_ds_sat_13
+    ua = u_gs12 + u_ds_sat_13
     x += 0.02
 
 print(x)
-print(u)
+print(ua)
+
+
+# Berechnung über Itteration von W/L_0,1
+ueg = float(0)
+wl6 = np.array()
+wl6[0] = 0.5
+count = 0
+s = 0.05
+for wl1 in range(5, 51):
+    while (ueg <= 0.899 or ueg >= 0.901):
+        u_ds_sat_6 = math.sqrt(2*i_q/(k_0n*wl6[count]))
+        u_ds_sat_1 = math.sqrt(2*i_q/(k_0n*wl1))
+        u_th1 = u_th0n + gamma*(math.sqrt(phi-u_ds_sat_6)-math.sqrt(phi))
+        ueg = u_ds_sat_6 + u_ds_sat_1 + u_th1
+        if ueg < 0.899:
+            s = s - 0.01
+            np.delete(wl6, count-1)
+        wl6 = np.append(wl6, wl6[count]+s)
+        count += 1
+    print('Mit wl1 =', wl1, 'ergibt sich wl6 =', wl6)
+    ueg = 0
+
+
+
+    wl6 = 0.5
+    count = 0
+
+
 
 
 
