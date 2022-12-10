@@ -129,43 +129,46 @@ print('M11, M13:', wl_11_13)'''
 
 
 # Berechnung über die Ungleichung für die Ausgangsspannung: -v_ss + u_gs_12 +u_ds_sat_13 <= -u_a_min
-x = 0.5
+wl13_temp = 0.5
 ua = float(0)
 while(ua <= 0.99 or ua >= 1.01) :
-    u_gs12 = u_th0n + math.sqrt(2*i_q/(k_0n*x))
+    u_gs12 = u_th0n + math.sqrt(2*i_q/(k_0n*wl13_temp))
     u_th13 = u_th0n + gamma * (math.sqrt(phi + u_gs12) - math.sqrt(phi))
     u_ds_sat_13 = u_gs12 - u_th13
     ua = u_gs12 + u_ds_sat_13
-    x += 0.02
-
-print(x)
+    wl13_temp += 0.02
+wl13 = wl13_temp
+print(wl13)
 print(ua)
 
 
 # Berechnung über Itteration von W/L_0,1
 ueg = float(0)
-wl6 = np.array()
-wl6[0] = 0.5
+start_wl1 = 5
+stop_wl1 = 50
+wl = np.zeros(shape=(stop_wl1-start_wl1+1, 17), dtype=float)
+wl[:, 0] = np.transpose(np.arange(start_wl1, stop_wl1+1))
+wl[:, 1] = np.transpose(np.arange(start_wl1, stop_wl1+1))
+wl[:, 10:14] = wl13
+wl6_temp = 0.5
 count = 0
 s = 0.05
-for wl1 in range(5, 51):
+for wl1 in range(start_wl1, stop_wl1+1):
     while (ueg <= 0.899 or ueg >= 0.901):
-        u_ds_sat_6 = math.sqrt(2*i_q/(k_0n*wl6[count]))
+        u_ds_sat_6 = math.sqrt(2*i_q/(k_0n*wl6_temp))
         u_ds_sat_1 = math.sqrt(2*i_q/(k_0n*wl1))
         u_th1 = u_th0n + gamma*(math.sqrt(phi-u_ds_sat_6)-math.sqrt(phi))
         ueg = u_ds_sat_6 + u_ds_sat_1 + u_th1
         if ueg < 0.899:
+            wl6_temp += -s
             s = s - 0.01
-            np.delete(wl6, count-1)
-        wl6 = np.append(wl6, wl6[count]+s)
-        count += 1
-    print('Mit wl1 =', wl1, 'ergibt sich wl6 =', wl6)
+        wl6_temp += s
+    wl[count, 6] = wl6_temp
+    print('Mit wl1 =', wl[count, 1], 'ergibt sich wl6 =', wl[count, 6])
+
+    count += 1
+    wl6_temp = 0.5
     ueg = 0
-
-
-
-    wl6 = 0.5
-    count = 0
 
 
 

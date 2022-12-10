@@ -3,7 +3,7 @@ from sympy.solvers import solve
 from sympy import symbols
 from sympy.codegen.cfunctions import Sqrt
 from sympy.simplify import sqrtdenest
-import CMOS as c
+
 
 
 x = symbols('x')
