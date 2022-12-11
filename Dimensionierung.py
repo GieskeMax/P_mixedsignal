@@ -113,7 +113,8 @@ def calc_u_gs_10(wl_s):
 def calc_wl_c(u_gs, u_thk):
     return 2 * i_q / (k_0n * (u_a_min + v_ss - u_gs - u_thk) ** 2)
 
-#Alte Berechnung vom Kaskode Stromspiegel
+
+# Alte Berechnung vom Kaskode Stromspiegel
 '''wl_10_12 = calc_wl_s()
 print('M10, M12:', wl_10_12)
 
@@ -128,7 +129,7 @@ wl_11_13 = calc_wl_c(1, u_thk_11)
 print('M11, M13:', wl_11_13)'''
 
 
-# Berechnung über die Ungleichung für die Ausgangsspannung: -v_ss + u_gs_12 +u_ds_sat_13 <= -u_a_min
+# Berechnung von wl13 über die Ungleichung für die Ausgangsspannung: -v_ss + u_gs_12 +u_ds_sat_13 ≤ -u_a_min
 wl13_temp = 0.5
 ua = float(0)
 while(ua <= 0.99 or ua >= 1.01) :
@@ -143,30 +144,72 @@ print(ua)
 
 
 # Berechnung über Itteration von W/L_0,1
-ueg = float(0)
-start_wl1 = 5
+start_wl1 = 10
 stop_wl1 = 50
+count = 0
+s_default = 0.1
 wl = np.zeros(shape=(stop_wl1-start_wl1+1, 17), dtype=float)
 wl[:, 0] = np.transpose(np.arange(start_wl1, stop_wl1+1))
 wl[:, 1] = np.transpose(np.arange(start_wl1, stop_wl1+1))
 wl[:, 10:14] = wl13
-wl6_temp = 0.5
-count = 0
-s = 0.05
+s = s_default
 for wl1 in range(start_wl1, stop_wl1+1):
-    while (ueg <= 0.899 or ueg >= 0.901):
+    # Berechnung von wl6 über die Ungleichung: -v_ss + u_ds_sat_6 + u_gs_1 ≤ u_e_min
+    ueg = float(0)
+    wl6_temp = 0.5
+    while (ueg <= 0.895 or ueg >= 0.905):
         u_ds_sat_6 = math.sqrt(2*i_q/(k_0n*wl6_temp))
         u_ds_sat_1 = math.sqrt(2*i_q/(k_0n*wl1))
         u_th1 = u_th0n + gamma*(math.sqrt(phi-u_ds_sat_6)-math.sqrt(phi))
         ueg = u_ds_sat_6 + u_ds_sat_1 + u_th1
-        if ueg < 0.899:
+        if ueg < 0.905 and s == 0.01:
+            break
+        elif ueg < 0.895:
             wl6_temp += -s
-            s = s - 0.01
+            s = 0.01
         wl6_temp += s
-    wl[count, 6] = wl6_temp
-    print('Mit wl1 =', wl[count, 1], 'ergibt sich wl6 =', wl[count, 6])
+    wl[count, 5:7] = wl6_temp
+    wl[count, 4] = 0.5 * wl6_temp
+    wl[count, 14] = 0.5 * wl6_temp
 
+    # Berechnung von wl8 über die Ungleichung: v_dd - |u_gs_8| - u_ds_sat_1 + u_gs_1 >= u_e_max
+    wl8_temp = 0.2
+    ueg = float(0)
+    s = s_default
+    while (ueg <= 1.095 or ueg >= 1.105):
+        u_ds_sat_8 = math.sqrt(2*i_q/(k_0p*wl8_temp))
+        u_ds_sat_6 = math.sqrt(2 * i_q / (k_0n * wl[count, 6]))
+        u_th1 = u_th0n + gamma*(math.sqrt(phi-u_ds_sat_6)-math.sqrt(phi))
+        ueg = u_ds_sat_8 + u_th0p + u_th1
+        if ua < 1.105 and s == 0.01:
+            break
+        elif ua < 1.099:
+            wl8_temp += -s
+            s = 0.01
+        wl8_temp += s
+    wl[count, 7:10] = wl8_temp
+    wl[count, 15] = wl8_temp
+
+    '''wl3_temp = 0.1
+    ua = float(0)
+    s = s_default
+    while (ua <= 1.095 or ua >= 1.105):
+        u_ds_sat_9 = math.sqrt(2*i_q/(k_0p*wl[count, 9]))
+        u_ds_sat_3 = math.sqrt(2*i_q/(k_0p*wl3_temp))
+        ua = u_ds_sat_9 + u_th0p + u_ds_sat_3
+        if ua < 1.105 and s == 0.01:
+            break
+        elif ua < 1.099:
+            wl3_temp += -s
+            s = 0.01
+        wl3_temp += s
+    wl[count, 2:4] = wl3_temp
+    wl[count, 16] = 0.5*wl3_temp'''
+
+    print('Mit wl1 =', wl[count, 1], 'ergibt sich: wl6 =', wl[count, 6],
+          ', wl8 =', wl[count, 8], ' und wl3 =', wl[count, 3])
     count += 1
+    s = s_default
     wl6_temp = 0.5
     ueg = 0
 
