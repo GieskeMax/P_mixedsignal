@@ -108,4 +108,4 @@ s6 = s6_temp
 '''
 s6 = 2 * i_q / (k_0n * (u_e_min + v_ss - calc_uds_sat(i=0.5*i_q, s=s1, ttype='n') - u_th0n)**2)
 
-print('Mit M1 =', s1, 'ergibt sich: M3 =', s3, ', M6 =', s6, 'M9 = ', s9, ' und M13 =', s13)
+print('Mit M1 =', s1, 'ergibt sich: M3 =', s3, '; M6 =', s6, '; M9 = ', s9, ' und M13 =', s13)
