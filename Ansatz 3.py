@@ -139,7 +139,7 @@ while(ue <= 0.89 or ue >= 0.91):
 print(f"s6_backgate = {s6_temp}")
 
 # Step 7: Maximum Eingangsgleichtaktspannung
-uds8_test = uds9_test = v_dd - u_e_max + u_th0n
+uds8_test = uds9_test = v_dd - u_e_max + u_th0p
 s8_test = s9_test = (2 * i8) / (k_0p * uds8_test**2)
 if (s8 >= s8_test):
     print(f"s8 checked, s8_test={s8_test} < s8")
