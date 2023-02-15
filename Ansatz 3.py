@@ -72,7 +72,7 @@ def calc_uth(ubs, ttype):
 i6 = i_q
 
 # Step 2: Bias-Strom in Output-Kaskode
-fi = 1.2            # Faktor von 1.2 bis 1.5
+fi = 1.0            # Faktor von 1.2 bis 1.5
 i2 = i3 = i8 = i9 = fi * i6    # vermeidet Null Strom in Kaskode bei Sperrung eines Eingangstransistors
 
 # Step 3: Maximum Ausgangsspannung

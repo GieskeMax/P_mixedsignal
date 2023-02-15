@@ -145,7 +145,7 @@ print(ua)
 
 # Berechnung über Itteration von W/L_0,1
 start_wl1 = 10
-stop_wl1 = 50
+stop_wl1 = 30
 count = 0
 s_default = 0.1
 wl = np.zeros(shape=(stop_wl1-start_wl1+1, 17), dtype=float)

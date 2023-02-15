@@ -52,7 +52,7 @@ def calc_uds_sat(i, s, ttype):
     if ttype == 'n':
         return math.sqrt(2*i/(k_0n*s))
     elif ttype == 'p':
-        return math.sqrt(2*i/(k_0p*s))
+        return -math.sqrt(2*i/(k_0p*s))
     else:
         print('Error, no transistortype chosen (n/p)')
         return 0
@@ -61,51 +61,48 @@ def calc_uds_sat(i, s, ttype):
 def calc_uth(ubs, ttype):
     if ttype == 'n':
         return u_th0n + gamma * (math.sqrt(phi-ubs) - math.sqrt(phi))
-    elif ttype == 'n':
-        return u_th0p + gamma * (math.sqrt(phi-ubs) - math.sqrt(phi))
+    elif ttype == 'p':
+        return u_th0p - gamma * (math.sqrt(phi-ubs) - math.sqrt(phi))
     else:
         print('Error, no transistortype chosen (n/p)')
         return 0
 
 
-s1 = 20
-f39 = 3
-
-# Berechnung M10, M11, M12, M13
-s13_temp = 0.5
-ua = float(0)
-while(ua <= 0.99 or ua >= 1.01):
-    ugs_12 = calc_uds_sat(i=i_q, s=s13_temp, ttype='n') + u_th0n
-    uth_13 = calc_uth(ubs=-ugs_12, ttype='n')
-    uds_sat13 = ugs_12 - uth_13
-    ua = ugs_12 + uds_sat13
-    s13_temp += 0.02
-s13 = s13_temp
-print(s13)
-print(ua)
-
-# Berechnung M3, M9
-s9_temp = 0.5
-ua = float(0)
-while(ua <= 1.09 or ua >= 1.11):
-    ugs_9 = calc_uds_sat(i=i_q, s=s9_temp, ttype='p') + u_th0p
-    uds_sat3 = calc_uds_sat(i=i_q, s=f39*s9_temp, ttype='p')
-    ua = ugs_9 + uds_sat3
-    s9_temp += 0.02
-s9 = s9_temp
-s3 = f39*s9_temp
-
-# Berechnung M6
 '''
-s6_temp = 0.5
-ue = float(0)
-while(ue <=0.89 or ue >= 0.91):
-    uds_sat6 = calc_uds_sat(i=i_q, s=s6_temp, ttype='n')
-    uds_sat1 = calc_uds_sat(i=i_q, s=s1, ttype='n')
-    ue = uds_sat6 + uds_sat1 + u_th0n
-    s6_temp += 0.02
-s6 = s6_temp
+s_diff = 20
+s_casc = 15
+s_casc_m = 4
+top_bank = 11.25
+bot_bank = 5.5
 '''
-s6 = 2 * i_q / (k_0n * (u_e_min + v_ss - calc_uds_sat(i=0.5*i_q, s=s1, ttype='n') - u_th0n)**2)
 
-print('Mit M1 =', s1, 'ergibt sich: M3 =', s3, '; M6 =', s6, '; M9 = ', s9, ' und M13 =', s13)
+s_diff = 20
+print(f"s_diff = {s_diff}")
+uds_sat1 = calc_uds_sat(i_q, s_diff, ttype='n')
+print(f"uds_sat1 = {uds_sat1}")
+# s_bottom_bank: uds_sat6 = ue_min - vss - uds_sat_1 - uth
+
+uds_sat6 = u_e_min + v_ss - uds_sat1 - u_th0n
+print(f"uds_sat_6 = {uds_sat6}")
+
+s_bot_bank = (2 * i_q)/(k_0n * uds_sat6**2)
+print(f"s_bot_bank = {s_bot_bank}")
+
+'''uds_sat8 = calc_uds_sat(i_q, 11.25, ttype='p')
+ugs_8 = uds_sat8 + u_th0p
+print(f"uds_sat_8 = {uds_sat8}")
+print(f"ugs_8 = {ugs_8}")'''
+
+u_th1 = calc_uth(ubs=uds_sat6, ttype='n')
+print(f"uth1 = {u_th1}")
+ugs_8 = u_e_max - v_dd - u_th1
+print(f"ugs_8 = {ugs_8}")
+uds_sat8 = ugs_8 - u_th0p
+print(f"uds_sat_8 = {uds_sat8}")
+s_top_bank = (2 * i_q)/(k_0p * uds_sat8**2)
+print(f"s_top_bank = {s_top_bank}")
+
+
+
+
+
