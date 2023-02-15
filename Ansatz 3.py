@@ -82,11 +82,42 @@ s8 = s9 = (2 * i8) / (k_0p * usd8**2)
 s2 = s3 = (2 * i2) / (k_0p * usd2**2)
 print(f"s2 = {s2}, s8 = {s8}")
 
+s9_temp = 0.5
+f39 = 3
+ua = float(0)
+while ua <= 1.09 or ua >= 1.11:
+    ugs_9 = calc_uds_sat(i=i9, s=s9_temp, ttype='p') + u_th0p
+    uds_sat3 = calc_uds_sat(i=i9, s=f39*s9_temp, ttype='p')
+    ua = ugs_9 + uds_sat3
+    s9_temp += 0.02
+s3_temp = f39*s9_temp
+print(f"s9 = {s9_temp}, mit s3 = {f39}*s9")
+print(f"s3 = {s3_temp}, mit s3 = {f39}*s9")
+
 # Step 4: Minimum Ausgangsspannung
 uds10 = uds11 = uds12 = uds13 = 0.5 * (u_a_min + v_ss)
 i10 = i11 = i12 = i13 = fi * i6
 s10 = s11 = s12 = s13 = (2 * i10) / (k_0n * uds10**2)
-print(f"s10 = {s10}")
+print(f"s10 = {s10}, nach Literatur")
+
+s10_temp = 0.5
+ua = float(0)
+
+while ua <= 0.99 or ua >= 1.01:
+    ugs_12 = calc_uds_sat(i=i10, s=s10_temp, ttype='n') + u_th0n
+    uth_13 = calc_uth(ubs=-ugs_12, ttype='n')
+    uds_sat13 = ugs_12 - uth_13
+    ua = ugs_12 + uds_sat13
+    s10_temp += 0.02
+s11_temp = s12_temp = s13_temp = s10_temp
+print(f"s10 = {s10_temp}, mit backgate und ugs13 = ugs12")
+
+ua = float(0)
+s10_3 = 0.5
+while ua <= 0.99 or ua >= 1.01:
+    ua = calc_uds_sat(i=i10, s=s10_3, ttype='n') + u_th0n + calc_uds_sat(i=i10, s=s10_3, ttype='n')
+    s10_3 += 0.02
+print(f"s10 = {s10_3}, ohne Einfluß des backgate-effects auf uds_sat_13")
 
 # Step 5: Gain-Bandwith
 # f_t = gm1 / c_l
@@ -108,7 +139,7 @@ while(ue <= 0.89 or ue >= 0.91):
 print(f"s6_backgate = {s6_temp}")
 
 # Step 7: Maximum Eingangsgleichtaktspannung
-uds8_test = uds9_test = v_dd - u_e_max + u_th0n
+uds8_test = uds9_test = v_dd - u_e_max + u_th0p
 s8_test = s9_test = (2 * i8) / (k_0p * uds8_test**2)
 if (s8 >= s8_test):
     print(f"s8 checked, s8_test={s8_test} < s8")
