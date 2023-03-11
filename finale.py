@@ -103,8 +103,8 @@ s_top_bank = (2 * i_q)/(k_0p * uds_sat8**2)
 print(f"s_top_bank = {s_top_bank}")
 
 
-# Annahme s3 = 2....3 * s9
-s9 = 2 * i_q / k_0p / (1.1)**2 * (1+1/math.sqrt(3))**2
+# Annahme s3 = 2 * s9
+s9 = 2 * i_q / k_0p / (1.1)**2 * (1+1/math.sqrt(2))**2
 print(s9)
 
 
